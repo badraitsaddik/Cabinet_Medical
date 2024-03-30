@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="template1">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.css"/>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="p-3 m-3">
+    <div class="card">
+        <div class="card-header">
+            List des patients
+        </div>
+        <form method="get" th:action="@{/user/index}" class="m-1">
+
+            <input  name="keyword" placeholder="keyword" class="color: rgb(170, 170, 170) outline: none
+  border-inline: 2px solid #12B1D1"   th:value="${keyword}" >
+            <button class="btn btn-primary">search</button>
+        </form>
+
+        <div class="card-body">
+
+            <table class="table table-hover task">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>nom</th>
+                    <th>Prenom</th>
+                    <th>Date de naissance</th>
+                    <th>Malade</th>
+                    <th>score</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p:${listPatients}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.nom}"></td>
+                    <td th:text="${p.prenom}"></td>
+                    <td th:text="${p.dateNaissance}"></td>
+                    <td th:text="${p.malade}"></td>
+                    <td th:text="${p.score}"></td>
+                    <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}"  >
+                    <a onclick="return confirm('Are you sure ?')" class="btn btn-danger"
+                       th:href="@{/admin/deletePatient(id=${p.id},keyword=${keyword},page=${currentPage})}"> delete</a>
+                    </td>
+                    <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" >
+                        <a class="btn btn-success"
+                           th:href="@{/admin/editPatient(id=${p.id},keyword=${keyword},page=${currentPage})}">Edit</a>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <ul class="nav nav-pills justify-content-center">
+                <li  th:each="page ,status : ${pages}">
+                    <a th:class="${status.index ==currentPage? 'btn btn-info m-1' : 'btn btn-outline-info m-1'}"
+                       th:href="@{/user/index(page=${status.index} ,keyword=${keyword})}"
+                       th:text="${status.index}"> </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+</div>
+
+</body>
+</html>
